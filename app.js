@@ -92,7 +92,7 @@ app.use('/graphql', graphqlHttp.graphqlHTTP({
         }
 
         type RootQuery {
-            events: [Event!]!
+            workouts: [Workout!]!
             users: [User!]!
             userById(UserId: String): [User!]!
         }
@@ -109,9 +109,10 @@ app.use('/graphql', graphqlHttp.graphqlHTTP({
         `
     ),
     rootValue: {
-        events: () => {
+   
+        workout: () => {
             //populate() adds relationships that mongoose is aware of.
-            return Event.find().populate('creator');
+            return Workout.find().populate('creator');
         },
         users: () => {
             return User.find();
@@ -120,33 +121,36 @@ app.use('/graphql', graphqlHttp.graphqlHTTP({
             return User.find({ _id: arg.UserId });
         },
 
-        createEvent: (args) => {
-            // new Event comes from Mango
-            const event = new Event({
-                title: args.EventInput.title,
-                discription: args.EventInput.discription,
-                price: +args.EventInput.price,
-                date: new Date(args.EventInput.date),
-                creator: args.EventInput.creator, //"6262ac03cbf9105359356110"
+        createWorkout: (args) => {
+            // new Workout comes from Mango
+            const workout = new Workout({
+                mainTitle: args.WorkoutInput.mainTitle,
+                discriptionShort: args.WorkoutInput.discriptionShort,
+                discriptionExtra: args.WorkoutInput.discriptionExtra,
+                weekDuration: args.WorkoutInput.weekDuration,
+                imgUrl: args.WorkoutInput.imgUrl,
+                restBreakSecs: +args.WorkoutInput.restBreakSecs,
+                daysPerWeek: +args.WorkoutInput.daysPerWeek,
+                creator: args.WorkoutInput.creator, //"6262ac03cbf9105359356110"
             })
-            let createdEvent;
+            let createdWorkout;
             //async opperation
-            return event
+            return workout
                 .save()
                 .then((result) => {
                     //because we need to return the _doc before we move on to updating th user
-                    createdEvent = { ...result._doc }
-                    return User.findById(args.EventInput.creator)
+                    createdWorkout = { ...result._doc }
+                    return User.findById(args.WorkoutInput.creator)
                 })
                 .then(user => {
                     if (!user) {
                         throw new Error('User not found');
                     }
-                    user.createEvents.push(event);
+                    user.createWorkout.push(workout);
                     return user.save()
                 })
                 .then(result => {
-                    return createdEvent;
+                    return createdWorkout;
                 })
                 .catch(
                     (err) => {
