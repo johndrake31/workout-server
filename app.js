@@ -51,6 +51,7 @@ app.use('/graphql', graphqlHttp.graphqlHTTP({
             restBreakSecs: Number
             daysPerWeek:  [Float] 
             imgUrl: String
+            creator: User!
         }
 
         type User {
@@ -61,12 +62,28 @@ app.use('/graphql', graphqlHttp.graphqlHTTP({
 
         }
 
-        input EventInput {
+        input ExerciseInput {
             title: String!
-            discription: String!
-            price: Float!
-            date: String!
-            creator: String
+            sets: [Number]
+            weight: Number
+            timed: Boolean
+            timer: Float
+            metric: Boolean
+            notes: String!
+            reps: [Float]
+            uri: String
+            imgUrl: String
+            uuid: String
+            workout: String!
+        }
+        input WorkoutInput {
+            mainTitle: String!
+            discriptionShort: String
+            discriptionExtra: String
+            weekDuration:  [Float]
+            restBreakSecs: Number
+            daysPerWeek:  [Float] 
+            imgUrl: String
         }
 
         input UserInput {
