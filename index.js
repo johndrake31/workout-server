@@ -7,7 +7,7 @@ const bcrypt = require('bcryptjs');
 
 //local tools
 const Workout = require('./models/workout');
-const Workout = require('./models/exercise');
+const Exercise = require('./models/exercise');
 const User = require('./models/user');
 const res = require('express/lib/response');
 const app = express();
@@ -29,8 +29,8 @@ app.use('/graphql', graphqlHttp.graphqlHTTP({
         type Exercise {
             _id: ID!
             title: String!
-            sets: [Number]
-            weight: Number
+            sets: [Float]
+            weight: Float
             timed: Boolean
             timer: Float
             metric: Boolean
@@ -48,7 +48,7 @@ app.use('/graphql', graphqlHttp.graphqlHTTP({
             discriptionShort: String
             discriptionExtra: String
             weekDuration:  [Float]
-            restBreakSecs: Number
+            restBreakSecs: Float
             daysPerWeek:  [Float] 
             imgUrl: String
             creator: User!
@@ -58,14 +58,14 @@ app.use('/graphql', graphqlHttp.graphqlHTTP({
             _id: ID!
             email: String!
             password: String
-            createEvents: [Workout!]
+            createWorkout: [Workout!]
 
         }
 
         input ExerciseInput {
             title: String!
-            sets: [Number]
-            weight: Number
+            sets: [Float]
+            weight: Float
             timed: Boolean
             timer: Float
             metric: Boolean
@@ -81,9 +81,10 @@ app.use('/graphql', graphqlHttp.graphqlHTTP({
             discriptionShort: String
             discriptionExtra: String
             weekDuration:  [Float]
-            restBreakSecs: Number
+            restBreakSecs: Float
             daysPerWeek:  [Float] 
             imgUrl: String
+            creator: String!
         }
 
         input UserInput {
@@ -98,7 +99,7 @@ app.use('/graphql', graphqlHttp.graphqlHTTP({
         }
 
         type RootMutation {
-            createEvent(EventInput: EventInput): Event
+            createWorkout(WorkoutInput: WorkoutInput): Workout
             createUser(UserInput: UserInput): User
         }
 
@@ -110,7 +111,7 @@ app.use('/graphql', graphqlHttp.graphqlHTTP({
     ),
     rootValue: {
    
-        workout: () => {
+        workouts: () => {
             //populate() adds relationships that mongoose is aware of.
             return Workout.find().populate('creator');
         },
@@ -129,8 +130,8 @@ app.use('/graphql', graphqlHttp.graphqlHTTP({
                 discriptionExtra: args.WorkoutInput.discriptionExtra,
                 weekDuration: args.WorkoutInput.weekDuration,
                 imgUrl: args.WorkoutInput.imgUrl,
-                restBreakSecs: +args.WorkoutInput.restBreakSecs,
-                daysPerWeek: +args.WorkoutInput.daysPerWeek,
+                restBreakSecs: args.WorkoutInput.restBreakSecs,
+                daysPerWeek: args.WorkoutInput.daysPerWeek,
                 creator: args.WorkoutInput.creator, //"6262ac03cbf9105359356110"
             })
             let createdWorkout;

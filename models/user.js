@@ -11,11 +11,11 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
-    createEvents: [
+    createWorkout: [
         {
             type: Schema.Types.ObjectId,
             //ref to events.js mongoose.model('Event', eventSchema);
-            ref: 'Event'
+            ref: 'Workout'
         }
     ]
 })
